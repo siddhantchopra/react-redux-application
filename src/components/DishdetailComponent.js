@@ -1,15 +1,16 @@
 
 import React, { Fragment, Component } from 'react'
-import { Modal, ModalBody, ModalHeader, Button, Label, Row ,Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap'
+import { Modal, ModalBody, ModalHeader, Button, Label, Row, Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap'
 // import moment from 'moment'
 import { Link } from 'react-router-dom'
 import { Control, LocalForm, Errors } from 'react-redux-form'
+import { Loading } from './LoadingComponent'
 
 const required = (val) => val && val.length;
 const maxLength = (len) => val => !(val) || (val.length <= len)
 const minLength = (len) => val => (val) && (val.length >= len)
 
-const RenderDish = ({ dish, comments }) => {
+const RenderDish = ({ dish, comments, addComment, dishId }) => {
     if (dish !== undefined && dish !== null) {
         return (<Fragment>
             <div className="col-12 col-md-5 m-1">
@@ -21,7 +22,10 @@ const RenderDish = ({ dish, comments }) => {
                     </CardBody>
                 </Card>
             </div>
-            {<RenderComments comments={comments} />}
+            {<RenderComments comments={comments}
+                addComment={addComment}
+                dishId={dishId}
+            />}
         </Fragment>
         )
     } else {
@@ -30,7 +34,7 @@ const RenderDish = ({ dish, comments }) => {
         )
     }
 }
-const RenderComments = ({ comments }) => {
+const RenderComments = ({ comments, addComment, dishId }) => {
     if (comments !== null) {
         return (<div className="col-12 col-md-5 m-1">
             <Card>
@@ -48,7 +52,7 @@ const RenderComments = ({ comments }) => {
                             })
                         }
                     </ul>
-                    <CommentForm/>
+                    <CommentForm dishId={dishId} addComment={addComment} />
                 </CardBody>
             </Card>
         </div >
@@ -62,31 +66,57 @@ const RenderComments = ({ comments }) => {
 
 }
 const DishDetail = (props) => {
-
-    return (
-        <Fragment>
-            {props.dish &&
-                <div className="container">
-                    <div className="row">
-                        <Breadcrumb>
-                            <BreadcrumbItem>
-                                <Link to="/menu">Menu</Link>
-                            </BreadcrumbItem>
-                            <BreadcrumbItem active>
-                                {props.dish.name}
-                            </BreadcrumbItem>
-                        </Breadcrumb>
-                        <div className="col-12">
-                            <h3>{props.dish.name}</h3>
-                            <hr />
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        )
+    }
+    else if (props.errMess) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        )
+    }
+    else if (props.dish !== null){
+        return (
+            <Fragment>
+                {props.dish &&
+                    <div className="container">
+                        <div className="row">
+                            <Breadcrumb>
+                                <BreadcrumbItem>
+                                    <Link to="/menu">Menu</Link>
+                                </BreadcrumbItem>
+                                <BreadcrumbItem active>
+                                    {props.dish.name}
+                                </BreadcrumbItem>
+                            </Breadcrumb>
+                            <div className="col-12">
+                                <h3>{props.dish.name}</h3>
+                                <hr />
+                            </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <RenderDish dish={props.dish} comments={props.comments}/>
-                    </div>
-                </div>}
-        </Fragment>
-    )
+                        <div className="row">
+                            <RenderDish dish={props.dish} comments={props.comments}
+                                addComment={props.addComment}
+                                dishId={props.dish.id}
+                            />
+                        </div>
+                    </div>}
+            </Fragment>
+        )
+    } else {
+        return (
+            <div></div>
+        )
+    }
 }
 
 
@@ -104,7 +134,9 @@ class CommentForm extends Component {
     }
 
     handleSubmit = (values) => {
-        alert("Comment State is: " + JSON.stringify(values))
+        this.toggleModal()
+        // alert("Comment State is: " + JSON.stringify(values))
+        this.props.addComment(this.props.dishId, values.rating, values.name, values.comment)
     }
     render() {
 
@@ -119,10 +151,10 @@ class CommentForm extends Component {
                     <ModalBody>
                         <div className="container">
 
-                        <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
-                            <Row className="form-group">
-                            <Label htmlFor="rating"> Rating</Label>
-                                
+                            <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
+                                <Row className="form-group">
+                                    <Label htmlFor="rating"> Rating</Label>
+
                                     <Control.select model=".rating" name="rating"
                                         className="form-control">
                                         <option>1</option>
@@ -132,11 +164,11 @@ class CommentForm extends Component {
                                         <option>5</option>
 
                                     </Control.select>
-                                
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="tname">Your Name</Label>
-                             
+
+                                </Row>
+                                <Row className="form-group">
+                                    <Label htmlFor="tname">Your Name</Label>
+
                                     <Control.text model=".name" id="name" name="name"
                                         placeholder="Your Name"
                                         className="form-control"
@@ -151,24 +183,24 @@ class CommentForm extends Component {
                                             maxLength: 'Must be 15 characters or less'
                                         }}
                                     />
-                               
-                            </Row>
-                            <Row className="form-group">
-                                <Label htmlFor="comment">Comment</Label>
-                               
+
+                                </Row>
+                                <Row className="form-group">
+                                    <Label htmlFor="comment">Comment</Label>
+
                                     <Control.textarea model=".comment" id="comment" name="comment"
                                         rows="6"
                                         className="form-control" />
-                              
-                            </Row>
-                            <Row className="form-group">
-                                
+
+                                </Row>
+                                <Row className="form-group">
+
                                     <Button type="submit" color="primary">
                                         Submit
                                     </Button>
-                                
-                            </Row>
-                        </LocalForm>
+
+                                </Row>
+                            </LocalForm>
                         </div>
                     </ModalBody>
                 </Modal>
