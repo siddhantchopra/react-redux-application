@@ -11,7 +11,7 @@ const required = (val) => val && val.length;
 const maxLength = (len) => val => !(val) || (val.length <= len)
 const minLength = (len) => val => (val) && (val.length >= len)
 
-const RenderDish = ({ dish, comments, addComment, dishId }) => {
+const RenderDish = ({ dish, comments, postComment, dishId }) => {
     if (dish !== undefined && dish !== null) {
         return (<Fragment>
             <div className="col-12 col-md-5 m-1">
@@ -24,7 +24,7 @@ const RenderDish = ({ dish, comments, addComment, dishId }) => {
                 </Card>
             </div>
             {<RenderComments comments={comments}
-                addComment={addComment}
+                postComment={postComment}
                 dishId={dishId}
             />}
         </Fragment>
@@ -35,7 +35,7 @@ const RenderDish = ({ dish, comments, addComment, dishId }) => {
         )
     }
 }
-const RenderComments = ({ comments, addComment, dishId }) => {
+const RenderComments = ({ comments, postComment, dishId }) => {
     if (comments !== null) {
         return (<div className="col-12 col-md-5 m-1">
             <Card>
@@ -53,7 +53,7 @@ const RenderComments = ({ comments, addComment, dishId }) => {
                             })
                         }
                     </ul>
-                    <CommentForm dishId={dishId} addComment={addComment} />
+                    <CommentForm dishId={dishId} postComment={postComment} />
                 </CardBody>
             </Card>
         </div >
@@ -106,7 +106,7 @@ const DishDetail = (props) => {
                         </div>
                         <div className="row">
                             <RenderDish dish={props.dish} comments={props.comments}
-                                addComment={props.addComment}
+                                postComment={props.postComment}
                                 dishId={props.dish.id}
                             />
                         </div>
@@ -137,7 +137,7 @@ class CommentForm extends Component {
     handleSubmit = (values) => {
         this.toggleModal()
         // alert("Comment State is: " + JSON.stringify(values))
-        this.props.addComment(this.props.dishId, values.rating, values.name, values.comment)
+        this.props.postComment(this.props.dishId, values.rating, values.name, values.comment)
     }
     render() {
 
