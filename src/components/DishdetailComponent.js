@@ -5,7 +5,8 @@ import { Modal, ModalBody, ModalHeader, Button, Label, Row, Card, CardImg, CardT
 import { Link } from 'react-router-dom'
 import { Control, LocalForm, Errors } from 'react-redux-form'
 import { Loading } from './LoadingComponent'
-import {baseUrl} from '../shared/baseUrl'
+import { baseUrl } from '../shared/baseUrl'
+import { FadeTransform, Fade, Stagger } from 'react-animation-components'
 
 const required = (val) => val && val.length;
 const maxLength = (len) => val => !(val) || (val.length <= len)
@@ -15,13 +16,18 @@ const RenderDish = ({ dish, comments, postComment, dishId }) => {
     if (dish !== undefined && dish !== null) {
         return (<Fragment>
             <div className="col-12 col-md-5 m-1">
-                <Card>
-                    <CardImg width="100%" src={baseUrl+dish.image} alt={dish.name} />
-                    <CardBody>
-                        <CardTitle>{dish.name}</CardTitle>
-                        <CardText>{dish.description}</CardText>
-                    </CardBody>
-                </Card>
+                <FadeTransform in
+                    transformProps={{
+                        exitTransform: 'scale(0.5) translateY(-50%)'
+                    }}>
+                    <Card>
+                        <CardImg width="100%" src={baseUrl + dish.image} alt={dish.name} />
+                        <CardBody>
+                            <CardTitle>{dish.name}</CardTitle>
+                            <CardText>{dish.description}</CardText>
+                        </CardBody>
+                    </Card>
+                </FadeTransform>
             </div>
             {<RenderComments comments={comments}
                 postComment={postComment}
@@ -42,16 +48,19 @@ const RenderComments = ({ comments, postComment, dishId }) => {
                 <CardBody>
                     <h4>Comments</h4>
                     <ul className="list-unstyled">
+                        <Stagger in>
                         {
                             comments.map((comment) => {
-                                return <li style={{ marginBottom: '10px' }} key={comment.id}>{comment.comment}
+                                return <Fade in><li style={{ marginBottom: '10px' }} key={comment.id}>{comment.comment}
                                     <div style={{ marginTop: '10px' }}>--{comment.author},
                                 {/* {moment(comment.date).format('MMM DD, YYYY')} */}
                                         {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(Date.parse(comment.date)))}
                                     </div>
                                 </li>
+                                </Fade>
                             })
                         }
+                        </Stagger>
                     </ul>
                     <CommentForm dishId={dishId} postComment={postComment} />
                 </CardBody>
@@ -85,7 +94,7 @@ const DishDetail = (props) => {
             </div>
         )
     }
-    else if (props.dish !== null){
+    else if (props.dish !== null) {
         return (
             <Fragment>
                 {props.dish &&
