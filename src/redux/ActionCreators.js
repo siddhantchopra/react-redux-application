@@ -41,7 +41,7 @@ export const postComment = (dishId, rating, author, comment) => (dispatch)=> {
         .then(response => response.json())
         .then(response => dispatch(addComment(response)))
         .catch(error => {
-            console.log('Psot comments', error.message)
+            console.log('Post comments', error.message)
             alert('Your comment could not be posted \nError: '+error.message)
         })
 
@@ -189,3 +189,52 @@ export const addleaders = (leaders) => ({
     type: ActionTypes.ADD_LEADERS,
     payload: leaders
 })
+
+export const addFeedback = (feedback) => ({
+    type: ActionTypes.ADD_FEEDBACK,
+    payload: feedback
+})
+
+export const postFeedback = (id, firstname, lastname, telnum, email, agree, contactType, message) => (dispatch)=> {
+
+    const newFeedback = {
+        id: id,
+        firstname: firstname,
+        lastname: lastname,
+        telnum: telnum,
+        email: email,
+        agree: agree,
+        contactType: contactType,
+        message: message
+    }
+    newFeedback.date = new Date().toISOString()
+    return fetch(baseUrl + 'feedback', {
+        method: 'POST',
+        body: JSON.stringify(newFeedback),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response
+            }
+            else {
+                var error = new Error('Error ' + response.status + ': ' + response.statusText)
+                error.response = response
+                throw error
+            }
+        },
+            error => {
+                var errmess = new Error(error.message)
+                throw errmess
+            })
+        .then(response => response.json())
+        .then(response => dispatch(addFeedback(response)))
+        .catch(error => {
+            console.log('Post comments', error.message)
+            alert('Your comment could not be posted \nError: '+error.message)
+        })
+
+}
