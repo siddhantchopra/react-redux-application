@@ -195,10 +195,9 @@ export const addFeedback = (feedback) => ({
     payload: feedback
 })
 
-export const postFeedback = (id, firstname, lastname, telnum, email, agree, contactType, message) => (dispatch)=> {
+export const postFeedback = (firstname, lastname, telnum, email, agree, contactType, message) => (dispatch)=> {
 
     const newFeedback = {
-        id: id,
         firstname: firstname,
         lastname: lastname,
         telnum: telnum,
@@ -233,8 +232,8 @@ export const postFeedback = (id, firstname, lastname, telnum, email, agree, cont
         .then(response => response.json())
         .then(response => dispatch(addFeedback(response)))
         .catch(error => {
-            console.log('Post comments', error.message)
-            alert('Your comment could not be posted \nError: '+error.message)
+            console.log('Post Feedback', error.message)
+            alert('Your feedback could not be posted \nError: '+error.message)
         })
 
 }

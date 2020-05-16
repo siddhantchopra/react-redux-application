@@ -36,7 +36,7 @@ const mapDispatchToProps = (dispatch) => ({
 
   fetchLeaders: () => { dispatch(fetchLeaders()) },
 
-  postFeedback: (id, firstname, lastname, telnum, email, agree, contactType, message) => dispatch(postFeedback(id, firstname, lastname, telnum, email, agree, contactType, message)),
+  postFeedback: (firstname, lastname, telnum, email, agree, contactType, message) => dispatch(postFeedback(firstname, lastname, telnum, email, agree, contactType, message)),
 })
 
 class Main extends Component {
