@@ -3,13 +3,11 @@ Here is the basic implementation for a react project using Redux Architecture ho
 
 1) To get started with Clone the git repository on your local machine
 
-2) extract file db.json. Create a folder outsite the cloned folder with name 'json-server' and paste the file inside it
+2) extract file json-server and keep outsite the cloned folder
 
-3) Open the folder and run this command on CMD "npm install -g json-server"
+3) Open the "json-server" folder and run this command on CMD "npm install -g json-server"
 
-4) Inside folder 'json-server', create another folder name "public" and paste the images folder inside it
-
-5) Now run the command to start your local server "json-server --watch db.json -p 3001 -d 2000"
+5) Now run the command in "json-server" folder to start your local server "json-server --watch db.json -p 3001 -d 2000"
 
 6) Now go to your cloned git folder and open your command line and type "npm install" to install all the npm packages to run the project
 
